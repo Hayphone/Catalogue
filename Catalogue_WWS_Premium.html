@@ -914,6 +914,37 @@
             padding: 16px;
             margin-bottom: 12px;
             border: 1px solid rgba(245, 158, 11, 0.1);
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+        }
+
+        .cart-item-image {
+            width: 60px;
+            height: 60px;
+            min-width: 60px;
+            border-radius: var(--radius-sm);
+            background: var(--bg-elevated);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .cart-item-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .cart-item-image .placeholder {
+            font-size: 1.5rem;
+            opacity: 0.5;
+        }
+
+        .cart-item-content {
+            flex: 1;
+            min-width: 0;
         }
 
         .cart-item-header {
@@ -3201,7 +3232,8 @@
                 pv_unitaire: product.pv_unitaire,
                 pv_colis: product.pv_colis,
                 unitQty: 0,
-                packageQty: pkgQty
+                packageQty: pkgQty,
+                image: getProductImage(product.name)
             });
 
             saveCart();
@@ -3336,7 +3368,8 @@
                     pv_unitaire: product.pv_unitaire,
                     pv_colis: product.pv_colis,
                     unitQty: 0,
-                    packageQty: pkgQty
+                    packageQty: pkgQty,
+                    image: getProductImage(product.name)
                 });
             }
 
@@ -3487,25 +3520,30 @@
 
             content.innerHTML = cart.items.map((item, idx) => `
                 <div class="cart-item">
-                    <div class="cart-item-header">
-                        <span class="cart-item-name">${item.name}</span>
-                        <button class="cart-item-remove" onclick="removeFromCart(${idx})">×</button>
+                    <div class="cart-item-image">
+                        ${item.image ? `<img src="${item.image}" alt="${item.name}">` : '<span class="placeholder">📦</span>'}
                     </div>
-                    <div class="cart-item-details">
-                        <div class="cart-item-line">
-                            <span>Colis (${item.pcb} unités)</span>
-                            <span>${item.packageQty} × ${item.pv_colis.toFixed(2)}€</span>
+                    <div class="cart-item-content">
+                        <div class="cart-item-header">
+                            <span class="cart-item-name">${item.name}</span>
+                            <button class="cart-item-remove" onclick="removeFromCart(${idx})">×</button>
                         </div>
-                        <div class="cart-item-line">
-                            <span>Total ligne HT</span>
-                            <span>${(item.packageQty * item.pv_colis).toFixed(2)}€</span>
+                        <div class="cart-item-details">
+                            <div class="cart-item-line">
+                                <span>Colis (${item.pcb} unités)</span>
+                                <span>${item.packageQty} × ${item.pv_colis.toFixed(2)}€</span>
+                            </div>
+                            <div class="cart-item-line">
+                                <span>Total ligne HT</span>
+                                <span>${(item.packageQty * item.pv_colis).toFixed(2)}€</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="cart-item-qty">
-                        <button class="qty-btn" onclick="updateCartItemQty(${idx}, -1)">−</button>
-                        <span class="qty-value">${item.packageQty}</span>
-                        <button class="qty-btn" onclick="updateCartItemQty(${idx}, 1)">+</button>
-                        <span style="margin-left:8px;color:var(--cream-muted);font-size:0.85rem">colis</span>
+                        <div class="cart-item-qty">
+                            <button class="qty-btn" onclick="updateCartItemQty(${idx}, -1)">−</button>
+                            <span class="qty-value">${item.packageQty}</span>
+                            <button class="qty-btn" onclick="updateCartItemQty(${idx}, 1)">+</button>
+                            <span style="margin-left:8px;color:var(--cream-muted);font-size:0.85rem">colis</span>
+                        </div>
                     </div>
                 </div>
             `).join('');
