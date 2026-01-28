@@ -233,19 +233,31 @@
             display: flex;
             gap: 10px;
             overflow-x: auto;
-            padding-bottom: 4px;
+            padding: 8px 4px 12px;
+            margin: -8px -4px 0;
             scrollbar-width: none;
             -webkit-overflow-scrolling: touch;
+            mask-image: linear-gradient(to right, transparent, black 8px, black calc(100% - 8px), transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 8px, black calc(100% - 8px), transparent);
         }
 
         .filters-row::-webkit-scrollbar {
             display: none;
         }
 
+        /* Scroll indicator hint */
+        @media (max-width: 768px) {
+            .filters-row::after {
+                content: '';
+                min-width: 20px;
+                flex-shrink: 0;
+            }
+        }
+
         .filter-pill {
             padding: 10px 18px;
-            background: transparent;
-            border: 1px solid rgba(245, 158, 11, 0.25);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--cream-dim);
             border-radius: 50px;
             font-size: 0.85rem;
@@ -253,29 +265,184 @@
             font-family: var(--font-body);
             cursor: pointer;
             white-space: nowrap;
-            transition: all 0.3s ease;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
             min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .filter-pill .filter-icon {
+            font-size: 1.1rem;
+            line-height: 1;
+            transition: transform 0.3s ease;
+        }
+
+        .filter-pill .filter-text {
+            transition: all 0.3s ease;
+        }
+
+        .filter-pill::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: inherit;
         }
 
         .filter-pill:hover {
-            border-color: var(--copper);
-            color: var(--cream);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .filter-pill:hover .filter-icon {
+            transform: scale(1.15);
+        }
+
+        .filter-pill:active {
+            transform: translateY(0) scale(0.98);
         }
 
         .filter-pill.active {
-            background: var(--copper);
-            border-color: var(--copper);
-            color: var(--bg-deep);
             font-weight: 600;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .filter-pill.active::before {
+            opacity: 1;
+        }
+
+        /* Category-specific colors */
+        .filter-pill[data-category=""] {
+            --pill-color: var(--copper);
+            --pill-bg: rgba(245, 158, 11, 0.15);
+        }
+        .filter-pill[data-category=""]:hover,
+        .filter-pill[data-category=""].active {
+            border-color: var(--copper);
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0.1) 100%);
+            color: var(--copper-light);
+        }
+        .filter-pill[data-category=""].active {
+            background: linear-gradient(135deg, var(--copper) 0%, var(--copper-dark) 100%);
+            color: #000;
+        }
+
+        .filter-pill[data-category="Boissons USA"] {
+            --pill-color: #3b82f6;
+            --pill-bg: rgba(59, 130, 246, 0.15);
+        }
+        .filter-pill[data-category="Boissons USA"]:hover,
+        .filter-pill[data-category="Boissons USA"].active {
+            border-color: #3b82f6;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(239, 68, 68, 0.1) 100%);
+            color: #60a5fa;
+        }
+        .filter-pill[data-category="Boissons USA"].active {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: #fff;
+        }
+
+        .filter-pill[data-category="Boissons Europe"] {
+            --pill-color: #2563eb;
+            --pill-bg: rgba(37, 99, 235, 0.15);
+        }
+        .filter-pill[data-category="Boissons Europe"]:hover,
+        .filter-pill[data-category="Boissons Europe"].active {
+            border-color: #2563eb;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.2) 0%, rgba(251, 191, 36, 0.1) 100%);
+            color: #60a5fa;
+        }
+        .filter-pill[data-category="Boissons Europe"].active {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            color: #fbbf24;
+        }
+
+        .filter-pill[data-category="Boissons Asie"] {
+            --pill-color: #ec4899;
+            --pill-bg: rgba(236, 72, 153, 0.15);
+        }
+        .filter-pill[data-category="Boissons Asie"]:hover,
+        .filter-pill[data-category="Boissons Asie"].active {
+            border-color: #ec4899;
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.2) 0%, rgba(244, 114, 182, 0.1) 100%);
+            color: #f472b6;
+        }
+        .filter-pill[data-category="Boissons Asie"].active {
+            background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+            color: #fff;
+        }
+
+        .filter-pill[data-category="Red Bull"] {
+            --pill-color: #dc2626;
+            --pill-bg: rgba(220, 38, 38, 0.15);
+        }
+        .filter-pill[data-category="Red Bull"]:hover,
+        .filter-pill[data-category="Red Bull"].active {
+            border-color: #dc2626;
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.2) 0%, rgba(37, 99, 235, 0.1) 100%);
+            color: #f87171;
+        }
+        .filter-pill[data-category="Red Bull"].active {
+            background: linear-gradient(135deg, #dc2626 0%, #1e40af 100%);
+            color: #fbbf24;
+        }
+
+        .filter-pill[data-category="Monster Energy"] {
+            --pill-color: #22c55e;
+            --pill-bg: rgba(34, 197, 94, 0.15);
+        }
+        .filter-pill[data-category="Monster Energy"]:hover,
+        .filter-pill[data-category="Monster Energy"].active {
+            border-color: #22c55e;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(0, 0, 0, 0.3) 100%);
+            color: #4ade80;
+        }
+        .filter-pill[data-category="Monster Energy"].active {
+            background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);
+            color: #000;
+        }
+
+        .filter-pill[data-category="Snacks"] {
+            --pill-color: #f97316;
+            --pill-bg: rgba(249, 115, 22, 0.15);
+        }
+        .filter-pill[data-category="Snacks"]:hover,
+        .filter-pill[data-category="Snacks"].active {
+            border-color: #f97316;
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.2) 0%, rgba(234, 179, 8, 0.1) 100%);
+            color: #fb923c;
+        }
+        .filter-pill[data-category="Snacks"].active {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            color: #fff;
+        }
+
+        .filter-pill[data-category="Matériels Fumeur"] {
+            --pill-color: #8b5cf6;
+            --pill-bg: rgba(139, 92, 246, 0.15);
+        }
+        .filter-pill[data-category="Matériels Fumeur"]:hover,
+        .filter-pill[data-category="Matériels Fumeur"].active {
+            border-color: #8b5cf6;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(168, 85, 247, 0.1) 100%);
+            color: #a78bfa;
+        }
+        .filter-pill[data-category="Matériels Fumeur"].active {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: #fff;
         }
 
         .sort-select {
-            padding: 10px 36px 10px 16px;
-            background: var(--bg-warm);
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%23c8956c'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            padding: 10px 40px 10px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%23f59e0b'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 12px center;
-            border: 1px solid rgba(245, 158, 11, 0.25);
+            background-position: right 14px center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--cream-dim);
             border-radius: 50px;
             font-size: 0.85rem;
@@ -284,19 +451,28 @@
             min-height: 44px;
             -webkit-appearance: none;
             appearance: none;
+            transition: all 0.3s ease;
+        }
+
+        .sort-select:hover {
+            border-color: rgba(245, 158, 11, 0.4);
+            background-color: rgba(245, 158, 11, 0.05);
         }
 
         .sort-select:focus {
             outline: none;
             border-color: var(--copper);
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
         }
 
         .view-toggle {
             display: flex;
-            background: var(--bg-warm);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 50px;
             padding: 4px;
             margin-left: auto;
+            gap: 2px;
         }
 
         .view-btn {
@@ -309,18 +485,31 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .view-btn:hover {
+            background: rgba(245, 158, 11, 0.15);
+        }
+
+        .view-btn:active {
+            transform: scale(0.92);
         }
 
         .view-btn svg {
             width: 18px;
             height: 18px;
             fill: var(--cream-muted);
-            transition: fill 0.2s ease;
+            transition: all 0.3s ease;
+        }
+
+        .view-btn:hover svg {
+            fill: var(--copper-light);
         }
 
         .view-btn.active {
-            background: var(--copper);
+            background: linear-gradient(135deg, var(--copper) 0%, var(--copper-dark) 100%);
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
         }
 
         .view-btn.active svg {
@@ -2113,14 +2302,38 @@
                 <input type="text" class="search-input" id="searchInput" placeholder="Rechercher un produit...">
             </div>
             <div class="filters-row">
-                <button class="filter-pill active" data-category="">Tous</button>
-                <button class="filter-pill" data-category="Boissons USA">🇺🇸 USA</button>
-                <button class="filter-pill" data-category="Boissons Europe">🇪🇺 Europe</button>
-                <button class="filter-pill" data-category="Boissons Asie">🌏 Asie</button>
-                <button class="filter-pill" data-category="Red Bull">Red Bull</button>
-                <button class="filter-pill" data-category="Monster Energy">Monster</button>
-                <button class="filter-pill" data-category="Snacks">Snacks</button>
-                <button class="filter-pill" data-category="Matériels Fumeur">Fumeur</button>
+                <button class="filter-pill active" data-category="">
+                    <span class="filter-icon">✨</span>
+                    <span class="filter-text">Tous</span>
+                </button>
+                <button class="filter-pill" data-category="Boissons USA">
+                    <span class="filter-icon">🇺🇸</span>
+                    <span class="filter-text">USA</span>
+                </button>
+                <button class="filter-pill" data-category="Boissons Europe">
+                    <span class="filter-icon">🇪🇺</span>
+                    <span class="filter-text">Europe</span>
+                </button>
+                <button class="filter-pill" data-category="Boissons Asie">
+                    <span class="filter-icon">🌸</span>
+                    <span class="filter-text">Asie</span>
+                </button>
+                <button class="filter-pill" data-category="Red Bull">
+                    <span class="filter-icon">🐂</span>
+                    <span class="filter-text">Red Bull</span>
+                </button>
+                <button class="filter-pill" data-category="Monster Energy">
+                    <span class="filter-icon">⚡</span>
+                    <span class="filter-text">Monster</span>
+                </button>
+                <button class="filter-pill" data-category="Snacks">
+                    <span class="filter-icon">🍿</span>
+                    <span class="filter-text">Snacks</span>
+                </button>
+                <button class="filter-pill" data-category="Matériels Fumeur">
+                    <span class="filter-icon">💨</span>
+                    <span class="filter-text">Fumeur</span>
+                </button>
                 <select class="sort-select" id="sortSelect">
                     <option value="name">Tri: Nom</option>
                     <option value="price-asc">Prix ↑</option>
