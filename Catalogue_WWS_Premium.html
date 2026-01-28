@@ -452,12 +452,19 @@
             color: #fff;
         }
 
-        .sort-select {
-            padding: 10px 40px 10px 16px;
+        /* Custom Dropdown for Sort */
+        .sort-dropdown {
+            position: relative;
+            min-width: 130px;
+        }
+
+        .sort-dropdown-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 10px 16px;
             background: rgba(255, 255, 255, 0.03);
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%23f59e0b'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 14px center;
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--cream-dim);
             border-radius: 50px;
@@ -465,20 +472,104 @@
             font-family: var(--font-body);
             cursor: pointer;
             min-height: 44px;
-            -webkit-appearance: none;
-            appearance: none;
             transition: all 0.3s ease;
+            white-space: nowrap;
         }
 
-        .sort-select:hover {
+        .sort-dropdown-toggle:hover {
             border-color: rgba(245, 158, 11, 0.4);
             background-color: rgba(245, 158, 11, 0.05);
         }
 
-        .sort-select:focus {
-            outline: none;
+        .sort-dropdown.open .sort-dropdown-toggle {
             border-color: var(--copper);
-            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+            background-color: rgba(245, 158, 11, 0.1);
+        }
+
+        .sort-dropdown-arrow {
+            width: 12px;
+            height: 12px;
+            fill: var(--copper);
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .sort-dropdown.open .sort-dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .sort-dropdown-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            min-width: 100%;
+            background: linear-gradient(135deg, var(--bg-card) 0%, #1a1a1e 100%);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: var(--radius-md);
+            padding: 6px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px) scale(0.95);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 500;
+            box-shadow:
+                0 10px 40px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+        }
+
+        .sort-dropdown.open .sort-dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .sort-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            color: var(--cream-dim);
+            font-size: 0.85rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .sort-dropdown-item:hover {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--cream);
+        }
+
+        .sort-dropdown-item.active {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0.1) 100%);
+            color: var(--copper-light);
+        }
+
+        .sort-dropdown-item .sort-icon {
+            width: 16px;
+            height: 16px;
+            opacity: 0.6;
+        }
+
+        .sort-dropdown-item:hover .sort-icon,
+        .sort-dropdown-item.active .sort-icon {
+            opacity: 1;
+        }
+
+        .sort-dropdown-item .check-icon {
+            width: 14px;
+            height: 14px;
+            fill: var(--copper);
+            margin-left: auto;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.2s ease;
+        }
+
+        .sort-dropdown-item.active .check-icon {
+            opacity: 1;
+            transform: scale(1);
         }
 
         .view-toggle {
@@ -2425,11 +2516,29 @@
                     <span class="filter-icon">💨</span>
                     <span class="filter-text">Fumeur</span>
                 </button>
-                <select class="sort-select" id="sortSelect">
-                    <option value="name">Tri: Nom</option>
-                    <option value="price-asc">Prix ↑</option>
-                    <option value="price-desc">Prix ↓</option>
-                </select>
+                <div class="sort-dropdown" id="sortDropdown">
+                    <button class="sort-dropdown-toggle" id="sortToggle" type="button">
+                        <span id="sortLabel">Tri: Nom</span>
+                        <svg class="sort-dropdown-arrow" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+                    </button>
+                    <div class="sort-dropdown-menu">
+                        <div class="sort-dropdown-item active" data-value="name">
+                            <svg class="sort-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>
+                            <span>Tri: Nom</span>
+                            <svg class="check-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                        </div>
+                        <div class="sort-dropdown-item" data-value="price-asc">
+                            <svg class="sort-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" transform="rotate(-90 12 12)"/></svg>
+                            <span>Prix ↑</span>
+                            <svg class="check-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                        </div>
+                        <div class="sort-dropdown-item" data-value="price-desc">
+                            <svg class="sort-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" transform="rotate(90 12 12)"/></svg>
+                            <span>Prix ↓</span>
+                            <svg class="check-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                        </div>
+                    </div>
+                </div>
                 <div class="view-toggle">
                     <button class="view-btn active" data-view="grid" onclick="setView('grid')" title="Vue grille">
                         <svg viewBox="0 0 24 24"><path d="M3 3v8h8V3H3zm6 6H5V5h4v4zm-6 4v8h8v-8H3zm6 6H5v-4h4v4zm4-16v8h8V3h-8zm6 6h-4V5h4v4zm-6 4v8h8v-8h-8zm6 6h-4v-4h4v4z"/></svg>
@@ -3939,6 +4048,7 @@
         let currentOrderRef = '';
         let filteredProducts = [...products];
         let currentCategory = '';
+        let currentSort = 'name';
         let searchTimeout = null;
         let currentView = 'grid';
 
@@ -4762,10 +4872,9 @@
                 return matchCategory && matchSearch;
             });
 
-            const sortValue = document.getElementById('sortSelect').value;
-            if (sortValue === 'price-asc') {
+            if (currentSort === 'price-asc') {
                 filteredProducts.sort((a, b) => a.pv_colis - b.pv_colis);
-            } else if (sortValue === 'price-desc') {
+            } else if (currentSort === 'price-desc') {
                 filteredProducts.sort((a, b) => b.pv_colis - a.pv_colis);
             } else {
                 filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
@@ -4789,7 +4898,41 @@
                 searchTimeout = setTimeout(filterProducts, 300);
             });
 
-            document.getElementById('sortSelect').addEventListener('change', filterProducts);
+            // Custom sort dropdown
+            const sortDropdown = document.getElementById('sortDropdown');
+            const sortToggle = document.getElementById('sortToggle');
+            const sortLabel = document.getElementById('sortLabel');
+            const sortItems = sortDropdown.querySelectorAll('.sort-dropdown-item');
+
+            sortToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                sortDropdown.classList.toggle('open');
+            });
+
+            sortItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const value = item.dataset.value;
+                    const label = item.querySelector('span').textContent;
+
+                    // Update active state
+                    sortItems.forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+
+                    // Update label and close
+                    sortLabel.textContent = label;
+                    currentSort = value;
+                    sortDropdown.classList.remove('open');
+
+                    filterProducts();
+                });
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!sortDropdown.contains(e.target)) {
+                    sortDropdown.classList.remove('open');
+                }
+            });
         }
 
         // Toast
