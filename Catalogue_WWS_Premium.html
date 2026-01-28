@@ -63,9 +63,11 @@
             background: var(--bg-deep);
             color: var(--cream);
             min-height: 100vh;
-            padding-bottom: 100px;
+            padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px));
             line-height: 1.5;
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         /* Noise texture overlay */
@@ -557,10 +559,19 @@
             animation: fadeUp 0.6s ease-out both;
         }
 
-        .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-soft), var(--shadow-glow);
-            border-color: rgba(245, 158, 11, 0.3);
+        /* Hover only on devices that support it (not touch) */
+        @media (hover: hover) and (pointer: fine) {
+            .product-card:hover {
+                transform: translateY(-4px);
+                box-shadow: var(--shadow-soft), var(--shadow-glow);
+                border-color: rgba(245, 158, 11, 0.3);
+            }
+        }
+
+        /* Active state for touch devices */
+        .product-card:active {
+            transform: scale(0.98);
+            border-color: rgba(245, 158, 11, 0.2);
         }
 
         .product-card.in-cart {
@@ -978,6 +989,28 @@
 
         .cart-fab:active {
             transform: scale(0.95);
+        }
+
+        /* FAB responsive pour petits écrans */
+        @media (max-width: 380px) {
+            .cart-fab {
+                width: 56px;
+                height: 56px;
+                bottom: 16px;
+                right: 16px;
+            }
+        }
+
+        /* FAB avec safe area iOS */
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+            .cart-fab {
+                bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+            }
+            @media (max-width: 380px) {
+                .cart-fab {
+                    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+                }
+            }
         }
 
         .cart-fab svg {
@@ -1786,6 +1819,50 @@
             .cart-item-price-row {
                 font-size: 0.78rem;
             }
+        }
+
+        /* ========== ACCESSIBILITY & PERFORMANCE ========== */
+        /* Respect user preference for reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        /* Better tap highlight on mobile */
+        @media (pointer: coarse) {
+            .filter-pill:active,
+            .add-button:active,
+            .qty-btn:active,
+            .view-btn:active,
+            .checkout-button:active {
+                opacity: 0.8;
+            }
+
+            /* Larger touch targets on mobile */
+            .qty-btn {
+                width: 44px;
+                height: 44px;
+            }
+
+            .cart-qty-btn {
+                width: 44px;
+                height: 44px;
+            }
+        }
+
+        /* Focus visible for keyboard navigation */
+        .filter-pill:focus-visible,
+        .add-button:focus-visible,
+        .qty-btn:focus-visible,
+        .checkout-button:focus-visible {
+            outline: 2px solid var(--copper);
+            outline-offset: 2px;
         }
 
         /* ========== MODALS ========== */
