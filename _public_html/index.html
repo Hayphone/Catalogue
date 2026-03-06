@@ -2,10 +2,10 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WWS Distribution | Catalogue Pro</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js" integrity="sha384-vuyrTV5nkscLp1knFvt+FIHfKKzmROBq5reruhMRslauj54mW+l2B8b6szMN6lCL" crossorigin="anonymous"></script>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -82,7 +82,7 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
             opacity: 0.03;
             pointer-events: none;
-            z-index: 10000;
+            z-index: 1;
         }
 
         .container {
@@ -6717,6 +6717,19 @@
         }
 
         // Cart state
+        function escapeHtml(str) {
+            if (str == null) return '';
+            return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+        }
+
+        function getProductId(product) {
+            return product.name + '|' + product.category;
+        }
+
+        function findProductIndex(productId) {
+            return products.findIndex(p => getProductId(p) === productId);
+        }
+
         let cart = {
             items: [],
             customerInfo: {
@@ -6784,11 +6797,11 @@
                     <td>
                         <div class="table-product-cell">
                             ${productImg ?
-                                `<img class="table-product-image" src="${productImg}" alt="" loading="lazy" onerror="this.style.display='none'">` :
+                                `<img class="table-product-image" src="${productImg}" alt="" loading="lazy" onerror="this.outerHTML='<span style=\\'opacity:0.3;font-size:1.2rem\\'>📦</span>'">` :
                                 ''}
                             <div class="table-product-info">
-                                <span class="name">${product.name}</span>
-                                <span class="category">${getCategoryShort(product.category)}</span>
+                                <span class="name">${escapeHtml(product.name)}</span>
+                                <span class="category">${escapeHtml(getCategoryShort(product.category))}</span>
                             </div>
                         </div>
                     </td>
@@ -6828,51 +6841,9 @@
         }
 
         function addToCartList(productIndex) {
-            const product = products[productIndex];
             const pkgQty = parseInt(document.getElementById(`list-pkg-${productIndex}`).value) || 0;
-
-            if (pkgQty === 0) {
-                showToast('Sélectionnez une quantité');
-                return;
-            }
-
-            cart.items = cart.items.filter(item => item.productIndex !== productIndex);
-
-            cart.items.push({
-                productIndex: productIndex,
-                name: product.name,
-                idart: product.idart,
-                poids: product.poids,
-                pcb: product.pcb,
-                tva: product.tva,
-                pv_unitaire: product.pv_unitaire,
-                pv_colis: product.pv_colis,
-                unitQty: 0,
-                packageQty: pkgQty,
-                image: getProductImage(product.name, product.category)
-            });
-
-            saveCart();
-            updateCartBadge();
-            updateCartStats();
-
-            const btn = document.getElementById(`listAddBtn-${productIndex}`);
-            btn.classList.add('added');
-            btn.textContent = 'MAJ';
-
-            const row = document.querySelector(`.products-table tr[data-index="${productIndex}"]`);
-            if (row) row.classList.add('in-cart');
-
-            const gridBtn = document.getElementById(`addBtn-${productIndex}`);
-            if (gridBtn) {
-                gridBtn.classList.add('added');
-                gridBtn.textContent = 'Mettre à jour';
-            }
-            const card = document.querySelector(`.product-card[data-index="${productIndex}"]`);
-            if (card) card.classList.add('in-cart');
-
-            if (navigator.vibrate) navigator.vibrate(50);
-            showToast('Panier mis à jour');
+            if (pkgQty === 0) { showToast('S\u00e9lectionnez une quantit\u00e9'); return; }
+            setCartItem(productIndex, pkgQty);
         }
 
         // Stats
@@ -6923,13 +6894,13 @@
                 return `
                 <div class="product-card ${inCart ? 'in-cart' : ''}" data-index="${globalIdx}" onclick="openProductDetail(${globalIdx})">
                     <div class="card-media">
-                        <span class="category-tag">${getCategoryShort(product.category)}</span>
+                        <span class="category-tag">${escapeHtml(getCategoryShort(product.category))}</span>
                         ${productImg ?
-                            `<img class="product-image" src="${productImg}" alt="${product.name}" loading="lazy" onerror="this.outerHTML='<span class=\\'product-placeholder\\'>📦</span>'">` :
+                            `<img class="product-image" src="${productImg}" alt="${escapeHtml(product.name)}" loading="lazy" onerror="this.outerHTML='<span class=\\'product-placeholder\\'>📦</span>'">` :
                             '<span class="product-placeholder">📦</span>'}
                     </div>
                     <div class="card-body">
-                        <h3 class="product-name">${product.name}</h3>
+                        <h3 class="product-name">${escapeHtml(product.name)}</h3>
                         <div class="card-compact-price">
                             <span class="price-main">${product.pv_colis.toFixed(2)}€</span>
                             <span class="price-sub">/ colis</span>
@@ -6988,73 +6959,8 @@
         }
 
         function addToCart(productIndex) {
-            const product = products[productIndex];
             const pkgQty = parseInt(document.getElementById(`pkg-${productIndex}`).value) || 0;
-
-            if (pkgQty === 0) {
-                cart.items = cart.items.filter(item => item.productIndex !== productIndex);
-            } else {
-                cart.items = cart.items.filter(item => item.productIndex !== productIndex);
-                cart.items.push({
-                    productIndex: productIndex,
-                    name: product.name,
-                    idart: product.idart,
-                    poids: product.poids,
-                    pcb: product.pcb,
-                    tva: product.tva,
-                    pv_unitaire: product.pv_unitaire,
-                    pv_colis: product.pv_colis,
-                    unitQty: 0,
-                    packageQty: pkgQty,
-                    image: getProductImage(product.name, product.category)
-                });
-            }
-
-            saveCart();
-            updateCartBadge();
-            updateCartStats();
-
-            const btn = document.getElementById(`addBtn-${productIndex}`);
-            const card = document.querySelector(`.product-card[data-index="${productIndex}"]`);
-
-            if (pkgQty > 0) {
-                btn.classList.add('added');
-                btn.textContent = 'Mettre à jour';
-                if (card) card.classList.add('in-cart');
-                showToast('Panier mis à jour');
-            } else {
-                btn.classList.remove('added');
-                btn.textContent = 'Ajouter au panier';
-                if (card) card.classList.remove('in-cart');
-                showToast('Produit retiré');
-            }
-
-            // Update list view
-            const listBtn = document.getElementById(`listAddBtn-${productIndex}`);
-            if (listBtn) {
-                if (pkgQty > 0) {
-                    listBtn.classList.add('added');
-                    listBtn.textContent = 'MAJ';
-                } else {
-                    listBtn.classList.remove('added');
-                    listBtn.textContent = 'Ajouter';
-                }
-            }
-
-            const row = document.querySelector(`.products-table tr[data-index="${productIndex}"]`);
-            if (row) {
-                if (pkgQty > 0) {
-                    row.classList.add('in-cart');
-                } else {
-                    row.classList.remove('in-cart');
-                }
-            }
-
-            if (navigator.vibrate) navigator.vibrate(50);
-
-            const fab = document.getElementById('cartFab');
-            fab.classList.add('pulse');
-            setTimeout(() => fab.classList.remove('pulse'), 500);
+            setCartItem(productIndex, pkgQty);
         }
 
         // Cart helpers
@@ -7066,6 +6972,60 @@
             return cart.items.find(item => item.productIndex === productIndex);
         }
 
+        function setCartItem(productIndex, qty) {
+            const product = products[productIndex];
+            cart.items = cart.items.filter(item => item.productIndex !== productIndex);
+            if (qty > 0) {
+                cart.items.push({
+                    productIndex: productIndex,
+                    productId: getProductId(product),
+                    name: product.name,
+                    idart: product.idart,
+                    poids: product.poids,
+                    pcb: product.pcb,
+                    tva: product.tva,
+                    pv_unitaire: product.pv_unitaire,
+                    pv_colis: product.pv_colis,
+                    unitQty: 0,
+                    packageQty: qty,
+                    image: getProductImage(product.name, product.category)
+                });
+            }
+            saveCart();
+            updateCartBadge();
+            updateCartStats();
+            refreshProductUI(productIndex, qty);
+            if (navigator.vibrate) navigator.vibrate(50);
+            showToast(qty > 0 ? 'Panier mis \u00e0 jour' : 'Produit retir\u00e9');
+        }
+
+        function refreshProductUI(productIndex, qty) {
+            const cartSvg = '<svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>';
+            const btn = document.getElementById(`addBtn-${productIndex}`);
+            const card = document.querySelector(`.product-card[data-index="${productIndex}"]`);
+            const calcBtn = document.getElementById(`calcBtn-${productIndex}`);
+            const listBtn = document.getElementById(`listAddBtn-${productIndex}`);
+            const row = document.querySelector(`.products-table tr[data-index="${productIndex}"]`);
+
+            if (btn) {
+                if (qty > 0) { btn.classList.add('added'); btn.textContent = qty + ' colis \u2713'; }
+                else { btn.classList.remove('added'); btn.textContent = 'Ajouter au panier'; }
+            }
+            if (card) { if (qty > 0) card.classList.add('in-cart'); else card.classList.remove('in-cart'); }
+            if (calcBtn) {
+                if (qty > 0) { calcBtn.classList.add('added'); calcBtn.innerHTML = qty + ' ' + cartSvg; }
+                else { calcBtn.classList.remove('added'); calcBtn.innerHTML = cartSvg; }
+            }
+            if (listBtn) {
+                if (qty > 0) { listBtn.classList.add('added'); listBtn.textContent = qty + ' colis'; }
+                else { listBtn.classList.remove('added'); listBtn.textContent = 'Ajouter'; }
+            }
+            if (row) { if (qty > 0) row.classList.add('in-cart'); else row.classList.remove('in-cart'); }
+
+            const fab = document.getElementById('cartFab');
+            if (fab) { fab.classList.add('pulse'); setTimeout(() => fab.classList.remove('pulse'), 500); }
+        }
+
         function saveCart() {
             localStorage.setItem('wwsCart', JSON.stringify(cart));
         }
@@ -7074,11 +7034,19 @@
             const saved = localStorage.getItem('wwsCart');
             if (saved) {
                 cart = JSON.parse(saved);
+                cart.items = cart.items.filter(item => {
+                    if (item.productId) {
+                        const idx = findProductIndex(item.productId);
+                        if (idx === -1) return false;
+                        item.productIndex = idx;
+                    }
+                    return true;
+                });
             }
         }
 
         function loadCustomerInfo() {
-            const saved = localStorage.getItem('wwsCustomer');
+            const saved = sessionStorage.getItem('wwsCustomer');
             if (saved) {
                 cart.customerInfo = JSON.parse(saved);
                 document.getElementById('customerName').value = cart.customerInfo.name || '';
@@ -7097,7 +7065,7 @@
                 email: document.getElementById('customerEmail').value,
                 notes: document.getElementById('customerNotes').value
             };
-            localStorage.setItem('wwsCustomer', JSON.stringify(cart.customerInfo));
+            sessionStorage.setItem('wwsCustomer', JSON.stringify(cart.customerInfo));
         }
 
         function updateCartBadge() {
@@ -7122,9 +7090,11 @@
 
             cart.items.forEach(item => {
                 const lineHT = item.packageQty * item.pv_colis;
-                const rate = parseFloat(item.tva.replace(',', '.').replace('%', '')) / 100;
+                const tvaStr = item.tva.replace(/\s/g, '');
+                const is55 = tvaStr.includes('5,5') || tvaStr.includes('5.5');
+                const rate = is55 ? 0.055 : 0.20;
 
-                if (rate === 0.055) {
+                if (is55) {
                     totals.ht55 += lineHT;
                     totals.tva55 += lineHT * rate;
                 } else {
@@ -7167,11 +7137,11 @@
             document.getElementById('detailBody').innerHTML = `
                 <div class="detail-image-area">
                     ${productImg ?
-                        `<img src="${productImg}" alt="${product.name}" onerror="this.outerHTML='<span class=\\'product-placeholder\\' style=\\'font-size:3rem;opacity:0.2\\'>📦</span>'">` :
+                        `<img src="${productImg}" alt="${escapeHtml(product.name)}" onerror="this.outerHTML='<span class=\\'product-placeholder\\' style=\\'font-size:3rem;opacity:0.2\\'>📦</span>'">` :
                         '<span class="product-placeholder" style="font-size:3rem;opacity:0.2">📦</span>'}
                 </div>
-                <div class="detail-category">${product.category}</div>
-                <h2 class="detail-name">${product.name}</h2>
+                <div class="detail-category">${escapeHtml(product.category)}</div>
+                <h2 class="detail-name">${escapeHtml(product.name)}</h2>
                 <div class="detail-specs">
                     <div class="detail-spec"><div class="val">${product.poids || '-'}</div><div class="lbl">Format</div></div>
                     <div class="detail-spec"><div class="val">x${product.pcb}</div><div class="lbl">PCB</div></div>
@@ -7226,44 +7196,16 @@
 
         function addFromDetail() {
             if (currentDetailIdx === null) return;
-            const product = products[currentDetailIdx];
-
-            if (detailQty === 0) {
-                cart.items = cart.items.filter(item => item.productIndex !== currentDetailIdx);
-                showToast('Produit retiré');
-            } else {
-                cart.items = cart.items.filter(item => item.productIndex !== currentDetailIdx);
-                cart.items.push({
-                    productIndex: currentDetailIdx,
-                    name: product.name,
-                    idart: product.idart,
-                    poids: product.poids,
-                    pcb: product.pcb,
-                    tva: product.tva,
-                    pv_unitaire: product.pv_unitaire,
-                    pv_colis: product.pv_colis,
-                    unitQty: 0,
-                    packageQty: detailQty,
-                    image: getProductImage(product.name, product.category)
-                });
-                showToast('Panier mis à jour');
-            }
-
-            saveCart();
-            updateCartBadge();
-            updateCartStats();
+            setCartItem(currentDetailIdx, detailQty);
             renderProducts();
-
             const btn = document.getElementById('detailAddBtn');
             if (btn) {
                 btn.classList.add('added');
-                btn.textContent = detailQty > 0 ? 'Mis à jour ✓' : 'Retiré';
+                btn.textContent = detailQty > 0 ? 'Mis \u00e0 jour \u2713' : 'Retir\u00e9';
                 setTimeout(() => {
-                    if (btn) btn.textContent = detailQty > 0 ? 'Mettre à jour' : 'Ajouter au panier';
+                    if (btn) btn.textContent = detailQty > 0 ? 'Mettre \u00e0 jour' : 'Ajouter au panier';
                 }, 1500);
             }
-
-            if (navigator.vibrate) navigator.vibrate(50);
         }
 
 
@@ -7358,11 +7300,11 @@
                     ${cart.items.map((item, idx) => `
                         <div class="cart-item" data-index="${idx}">
                             <div class="cart-item-image">
-                                ${item.image ? `<img src="${item.image}" alt="${item.name}" loading="lazy">` : '<span class="placeholder">📦</span>'}
+                                ${item.image ? `<img src="${item.image}" alt="${escapeHtml(item.name)}" loading="lazy">` : '<span class="placeholder">📦</span>'}
                             </div>
                             <div class="cart-item-content">
                                 <div class="cart-item-header">
-                                    <span class="cart-item-name">${item.name}</span>
+                                    <span class="cart-item-name">${escapeHtml(item.name)}</span>
                                     <button class="cart-item-remove" onclick="removeFromCartAnimated(${idx})" aria-label="Supprimer">×</button>
                                 </div>
                                 <div class="cart-item-meta">
@@ -7454,26 +7396,7 @@
             saveCart();
             renderCart();
             updateCartStats();
-
-            // Update grid card button
-            const gridBtn = document.getElementById(`addBtn-${item.productIndex}`);
-            if (gridBtn) {
-                gridBtn.classList.add('added');
-                gridBtn.textContent = item.packageQty + ' colis \u2713';
-            }
-            // Update mobile card calc button
-            const mobileBtn = document.getElementById(`calcBtn-${item.productIndex}`);
-            if (mobileBtn) {
-                const cartSvg = '<svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>';
-                mobileBtn.classList.add('added');
-                mobileBtn.innerHTML = item.packageQty + ' ' + cartSvg;
-            }
-            // Update list view button
-            const listBtn = document.getElementById(`listAddBtn-${item.productIndex}`);
-            if (listBtn) {
-                listBtn.classList.add('added');
-                listBtn.textContent = item.packageQty + ' colis';
-            }
+            refreshProductUI(item.productIndex, item.packageQty);
         }
 
         // Checkout
@@ -7490,9 +7413,22 @@
             const name = document.getElementById('customerName').value.trim();
             const company = document.getElementById('customerCompany').value.trim();
             const phone = document.getElementById('customerPhone').value.trim();
+            const email = document.getElementById('customerEmail').value.trim();
 
             if (!name || !company || !phone) {
                 showToast('Remplissez les champs obligatoires');
+                return;
+            }
+            if (phone.length < 8 || !/^[\d\s\+\-\.()]+$/.test(phone)) {
+                showToast('Num\u00e9ro de t\u00e9l\u00e9phone invalide');
+                return;
+            }
+            if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showToast('Adresse email invalide');
+                return;
+            }
+            if (name.length > 100 || company.length > 100) {
+                showToast('Nom ou soci\u00e9t\u00e9 trop long (max 100 car.)');
                 return;
             }
 
@@ -7501,18 +7437,18 @@
 
             const previewClient = document.getElementById('previewClientInfo');
             previewClient.innerHTML = `
-                <div class="preview-client-row"><span class="preview-client-label">Nom</span><span class="preview-client-value">${cart.customerInfo.name}</span></div>
-                <div class="preview-client-row"><span class="preview-client-label">Société</span><span class="preview-client-value">${cart.customerInfo.company}</span></div>
-                <div class="preview-client-row"><span class="preview-client-label">Téléphone</span><span class="preview-client-value">${cart.customerInfo.phone}</span></div>
-                ${cart.customerInfo.email ? `<div class="preview-client-row"><span class="preview-client-label">Email</span><span class="preview-client-value">${cart.customerInfo.email}</span></div>` : ''}
-                ${cart.customerInfo.notes ? `<div class="preview-client-row"><span class="preview-client-label">Notes</span><span class="preview-client-value">${cart.customerInfo.notes}</span></div>` : ''}
+                <div class="preview-client-row"><span class="preview-client-label">Nom</span><span class="preview-client-value">${escapeHtml(cart.customerInfo.name)}</span></div>
+                <div class="preview-client-row"><span class="preview-client-label">Société</span><span class="preview-client-value">${escapeHtml(cart.customerInfo.company)}</span></div>
+                <div class="preview-client-row"><span class="preview-client-label">Téléphone</span><span class="preview-client-value">${escapeHtml(cart.customerInfo.phone)}</span></div>
+                ${cart.customerInfo.email ? `<div class="preview-client-row"><span class="preview-client-label">Email</span><span class="preview-client-value">${escapeHtml(cart.customerInfo.email)}</span></div>` : ''}
+                ${cart.customerInfo.notes ? `<div class="preview-client-row"><span class="preview-client-label">Notes</span><span class="preview-client-value">${escapeHtml(cart.customerInfo.notes)}</span></div>` : ''}
             `;
 
             const previewBody = document.getElementById('previewTableBody');
             previewBody.innerHTML = cart.items.map(item => `
                 <tr>
                     <td>
-                        <div class="product-name">${item.name}</div>
+                        <div class="product-name">${escapeHtml(item.name)}</div>
                         <div class="qty-detail">${item.poids} · PCB ${item.pcb}</div>
                     </td>
                     <td>${item.packageQty} colis</td>
@@ -7547,10 +7483,8 @@
         }
 
         // PDF Generation
-        // Telegram Bot config
-        const TG_BOT_TOKEN = '7949208348:AAEu4bfRiKnclBfCs1_ULqvCU0YP-HSWpaI';
-        const TG_CHAT_ID = '6497149266';
-        const TG_API = `https://api.telegram.org/bot${TG_BOT_TOKEN}`;
+        // Telegram proxy (token secured server-side via Cloudflare Worker)
+        const TG_PROXY = 'https://wws-telegram-proxy.YOUR_CF_SUBDOMAIN.workers.dev';
 
         function buildPDF() {
             const { jsPDF } = window.jspdf;
@@ -7746,26 +7680,22 @@
                 // Build recap message
                 const message = buildTelegramMessage();
 
-                // 1. Send text message to admin
-                const msgResponse = await fetch(`${TG_API}/sendMessage`, {
+                // 1. Send text message via proxy
+                const msgResponse = await fetch(`${TG_PROXY}/send-message`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: TG_CHAT_ID,
-                        text: message,
-                        parse_mode: 'HTML'
-                    })
+                    body: JSON.stringify({ text: message, parse_mode: 'HTML' })
                 });
 
                 if (!msgResponse.ok) throw new Error('Erreur envoi message');
 
-                // 2. Send PDF document to admin
+                // 2. Send PDF document via proxy
                 const formData = new FormData();
-                formData.append('chat_id', TG_CHAT_ID);
-                formData.append('document', pdfBlob, `${orderRef}.pdf`);
+                formData.append('document', pdfBlob);
+                formData.append('filename', `${orderRef}.pdf`);
                 formData.append('caption', `\u{1F4C4} Bon de commande ${orderRef}`);
 
-                const docResponse = await fetch(`${TG_API}/sendDocument`, {
+                const docResponse = await fetch(`${TG_PROXY}/send-document`, {
                     method: 'POST',
                     body: formData
                 });
@@ -7889,85 +7819,7 @@
         function calcConfirm() {
             if (calcProductIndex === -1) return;
             const qty = parseInt(calcValue) || 0;
-            const product = products[calcProductIndex];
-
-            if (qty === 0) {
-                cart.items = cart.items.filter(item => item.productIndex !== calcProductIndex);
-                showToast('Produit retiré');
-            } else {
-                cart.items = cart.items.filter(item => item.productIndex !== calcProductIndex);
-                cart.items.push({
-                    productIndex: calcProductIndex,
-                    name: product.name,
-                    idart: product.idart,
-                    poids: product.poids,
-                    pcb: product.pcb,
-                    tva: product.tva,
-                    pv_unitaire: product.pv_unitaire,
-                    pv_colis: product.pv_colis,
-                    unitQty: 0,
-                    packageQty: qty,
-                    image: getProductImage(product.name, product.category)
-                });
-                showToast('Panier mis à jour');
-            }
-
-            saveCart();
-            updateCartBadge();
-            updateCartStats();
-
-            // Update grid card button
-            const btn = document.getElementById(`addBtn-${calcProductIndex}`);
-            const card = document.querySelector(`.product-card[data-index="${calcProductIndex}"]`);
-            if (btn) {
-                if (qty > 0) {
-                    btn.classList.add('added');
-                    btn.textContent = qty + ' colis \u2713';
-                    if (card) card.classList.add('in-cart');
-                } else {
-                    btn.classList.remove('added');
-                    btn.textContent = 'Ajouter au panier';
-                    if (card) card.classList.remove('in-cart');
-                }
-            }
-
-            // Update mobile card calc button
-            const calcBtn = document.getElementById(`calcBtn-${calcProductIndex}`);
-            if (calcBtn) {
-                const cartSvg = '<svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>';
-                if (qty > 0) {
-                    calcBtn.classList.add('added');
-                    calcBtn.innerHTML = qty + ' ' + cartSvg;
-                } else {
-                    calcBtn.classList.remove('added');
-                    calcBtn.innerHTML = cartSvg;
-                }
-            }
-
-            // Update list view button
-            const listBtn = document.getElementById(`listAddBtn-${calcProductIndex}`);
-            if (listBtn) {
-                if (qty > 0) {
-                    listBtn.classList.add('added');
-                    listBtn.textContent = qty + ' colis';
-                } else {
-                    listBtn.classList.remove('added');
-                    listBtn.textContent = 'Ajouter';
-                }
-            }
-            const row = document.querySelector(`.products-table tr[data-index="${calcProductIndex}"]`);
-            if (row) {
-                if (qty > 0) row.classList.add('in-cart');
-                else row.classList.remove('in-cart');
-            }
-
-            if (navigator.vibrate) navigator.vibrate(50);
-            const fab = document.getElementById('cartFab');
-            if (fab) {
-                fab.classList.add('pulse');
-                setTimeout(() => fab.classList.remove('pulse'), 500);
-            }
-
+            setCartItem(calcProductIndex, qty);
             closeCalcModal();
         }
 

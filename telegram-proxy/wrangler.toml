@@ -1,0 +1,7 @@
+name = "wws-telegram-proxy"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+# After deploy, set secrets:
+# wrangler secret put TG_BOT_TOKEN
+# wrangler secret put TG_CHAT_ID
