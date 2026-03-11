@@ -4,6 +4,8 @@ const TG_CHAT_ID = '';    // Set via: wrangler secret put TG_CHAT_ID
 const ALLOWED_ORIGINS = [
   'https://hayphone.github.io',
   'https://wwsdistribution.com',
+  'https://wwspro.com',
+  'https://www.wwspro.com',
   'http://localhost:3000',
 ];
 

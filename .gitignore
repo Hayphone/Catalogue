@@ -1,0 +1,47 @@
+# MCP config (contient tokens API)
+.mcp.json
+
+# API keys & secrets
+api-hostinger.md
+api-1.json
+tlgrm_bot.txt
+
+# Temp scripts
+*.py
+
+# Temp files
+nul
+*.bak
+upload_hostinger/
+
+# Data files
+idart_mapping.json
+idart_mapping_new.json
+pdf3_products.json
+
+# Images originales / temp
+product_images_original/
+product-image-trans/
+extracted_images/
+example/
+old/
+
+# Screenshots (root only, not product_images/)
+/IMG_4928.PNG
+/nouveau_tarif-cbd.PNG
+/stitch-mcp-claudecode.PNG
+/poire_hiver_check.jpg
+/redbull_rows_6_7_8.jpg
+/logo-wws-AQEygK3NblFkva3z.avif
+/*.xls
+/*.pdf
+
+# QA reports
+qa_report.html
+qa_new_images.html
+idart_review.html
+idart_review_new.html
+index.html.bak
+
+# Claude memory
+.claude/
