@@ -7633,7 +7633,7 @@
             msg += `\n\u{1F6D2} <b>Articles</b>\n`;
             cart.items.forEach(item => {
                 const total = (item.packageQty * item.pv_colis).toFixed(2);
-                msg += `\u2022 ${item.name} \u2014 ${item.packageQty} colis \u00d7 ${item.pv_colis.toFixed(2)}\u20ac = ${total}\u20ac HT\n`;
+                msg += `\u2022 [${item.idart}] ${item.name} \u2014 ${item.packageQty} colis \u00d7 ${item.pv_colis.toFixed(2)}\u20ac = ${total}\u20ac HT\n`;
             });
 
             msg += `\n\u{1F4B0} <b>Totaux</b>\n`;
@@ -7680,11 +7680,21 @@
                 // Build recap message
                 const message = buildTelegramMessage();
 
-                // 1. Send text message via proxy
+                // 1. Send text message via proxy with inline buttons
                 const msgResponse = await fetch(`${TG_PROXY}/send-message`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text: message, parse_mode: 'HTML' })
+                    body: JSON.stringify({
+                        text: message,
+                        parse_mode: 'HTML',
+                        reply_markup: JSON.stringify({
+                            inline_keyboard: [[
+                                { text: 'Envoi Caisse', callback_data: `send:${currentOrderRef}` },
+                                { text: 'Modifier', callback_data: `edit:${currentOrderRef}` },
+                                { text: 'Rejeter', callback_data: `reject:${currentOrderRef}` }
+                            ]]
+                        })
+                    })
                 });
 
                 if (!msgResponse.ok) throw new Error('Erreur envoi message');
