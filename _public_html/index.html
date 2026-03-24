@@ -896,12 +896,57 @@
             display: none;
         }
 
-        /* Scroll indicator hint */
+        /* Scroll indicator hint — mobile swipe arrow */
+        .filters-row-wrapper {
+            position: relative;
+        }
+        .scroll-hint {
+            display: none;
+        }
         @media (max-width: 768px) {
             .filters-row::after {
                 content: '';
                 min-width: 20px;
                 flex-shrink: 0;
+            }
+            .scroll-hint {
+                display: flex;
+                align-items: center;
+                position: absolute;
+                right: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                pointer-events: none;
+                z-index: 5;
+                animation: scrollHintFade 3s ease-in-out forwards;
+            }
+            .scroll-hint::before {
+                content: '';
+                width: 40px;
+                height: 100%;
+                position: absolute;
+                right: 0;
+                background: linear-gradient(to right, transparent, var(--bg-deep) 70%);
+            }
+            .scroll-hint svg {
+                width: 18px;
+                height: 18px;
+                fill: var(--copper);
+                opacity: 0.7;
+                animation: scrollHintBounce 1.2s ease-in-out infinite;
+                position: relative;
+                z-index: 1;
+                margin-right: 2px;
+                filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.4));
+            }
+            @keyframes scrollHintBounce {
+                0%, 100% { transform: translateX(0); }
+                50% { transform: translateX(5px); }
+            }
+            @keyframes scrollHintFade {
+                0% { opacity: 1; }
+                70% { opacity: 1; }
+                100% { opacity: 0; visibility: hidden; }
             }
         }
 
@@ -997,7 +1042,7 @@
         }
         .filter-pill[data-category=""].active {
             background: linear-gradient(135deg, var(--copper) 0%, var(--copper-dark) 100%);
-            color: #000;
+            color: #fff;
         }
 
         .filter-pill[data-category="BOISSONS DU MONDE"] {
@@ -1072,7 +1117,7 @@
         }
         .filter-pill[data-category="MONSTER ENERGY DRINK"].active {
             background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);
-            color: #000;
+            color: #fff;
         }
 
         .filter-pill[data-category="Snacks"] {
@@ -1117,7 +1162,7 @@
         }
         .filter-pill[data-category="OCB / CBD / POPPERS"].active {
             background: linear-gradient(135deg, #84cc16 0%, #65a30d 100%);
-            color: #000;
+            color: #fff;
         }
 
         .filter-pill[data-category="Matériels Chicha / Autre"] {
@@ -4025,7 +4070,8 @@
                 </svg>
                 <input type="text" class="search-input" id="searchInput" placeholder="Rechercher un produit...">
             </div>
-            <div class="filters-row">
+            <div class="filters-row-wrapper">
+            <div class="filters-row" id="filtersRow">
                 <button class="filter-pill active" data-category="">
                     <span class="filter-icon">✨</span>
                     <span class="filter-text">Tous</span>
@@ -4078,6 +4124,10 @@
                         <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
                     </button>
                 </div>
+            </div>
+            <div class="scroll-hint" id="scrollHint">
+                <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
+            </div>
             </div>
         </div>
 
@@ -7315,7 +7365,7 @@
             "JUMEX MANGUE": "product_images/JUMEX MANGUE.png",
             "JUMEX ANANAS COCO": "product_images/JUMEX ANANAS COCO.png",
             "JUMEX FRAISE BANANE": "product_images/JUMEX FRAISE BANANE.png",
-            "JUMEX PÊCHE": "product_images/JUMEX PÊCHE.png",
+            "JUMEX PÊCHE": "product_images/JUMEX PECHE.png",
             "JUMEX POMME": "product_images/JUMEX POMME.png",
             "COCA COLA ORANGE CREAM": "product_images/COCA COLA ORANGE CREAM.png",
             "FANTA POIRE": "product_images/FANTA POIRE.png",
@@ -7328,15 +7378,15 @@
             "PEPSI FRAISE CREAM": "product_images/PEPSI FRAISE CREAM.png",
             "PEPSI CREAM": "product_images/PEPSI CREAM.png",
             "COCA COLA CITRON": "product_images/COCA COLA CITRON.png",
-            "WARHEADS SOUR PASTÈQUE": "product_images/WARHEADS SOUR PASTÈQUE.png",
-            "WARHEADS SOUR PÊCHE": "product_images/WARHEADS SOUR PÊCHE.png",
+            "WARHEADS SOUR PASTÈQUE": "product_images/WARHEADS SOUR PASTEQUE.png",
+            "WARHEADS SOUR PÊCHE": "product_images/WARHEADS SOUR PECHE.png",
             "WARHEADS SOUR CERISE": "product_images/WARHEADS SOUR CERISE.png",
             "WARHEADS SOUR POMME": "product_images/WARHEADS SOUR POMME.png",
             "WARHEADS SOUR FRAMBOISE": "product_images/WARHEADS SOUR FRAMBOISE.png",
             "HAMOUD LIMONADE": "product_images/HAMOUD LIMONADE.png",
             "KINZA GRENADE": "product_images/KINZA GRENADE.png",
             "FUSE TEA ANANAS MANGUE": "product_images/FUSE TEA ANANAS MANGUE.png",
-            "FUSE TEA PASTÈQUE": "product_images/FUSE TEA PASTÈQUE.png",
+            "FUSE TEA PASTÈQUE": "product_images/FUSE TEA PASTEQUE.png",
             "FUSE TEA MELON FRAISE": "product_images/FUSE TEA MELON FRAISE.png",
             "ESTATE BY FERRERO PECHE": "product_images/ESTATE BY FERRERO PECHE.png",
             "ESTATE BY FERRERO PECHE PAILLE": "product_images/ESTATE BY FERRERO PECHE PAILLE.png",
@@ -7346,10 +7396,10 @@
             "SEVEN UP BOUTEILLES": "product_images/SEVEN UP BOUTEILLES.png",
             "KAS CITRON": "product_images/KAS CITRON.png",
             "OASIS TROPICAL BOUTEILLES": "product_images/OASIS TROPICAL BOUTEILLES.png",
-            "LIPTON PÊCHE BOUTEILLLE": "product_images/LIPTON PÊCHE BOUTEILLLE.png",
+            "LIPTON PÊCHE BOUTEILLLE": "product_images/LIPTON PECHE BOUTEILLLE.png",
             "LIPTON FRAMBOISE BOUTEILLLE": "product_images/LIPTON FRAMBOISE BOUTEILLLE.png",
             "COCA COLA PETITE BOUTEILLLE (UE)": "product_images/COCA COLA PETITE BOUTEILLLE (UE).png",
-            "LIPTON PÊCHE PETITE BOUTEILLLE": "product_images/LIPTON PÊCHE PETITE BOUTEILLLE.png",
+            "LIPTON PÊCHE PETITE BOUTEILLLE": "product_images/LIPTON PECHE PETITE BOUTEILLLE.png",
             "LIPTON FRAMBOISE PETITE BOUTEILLLE": "product_images/LIPTON FRAMBOISE PETITE BOUTEILLLE.png",
             "OASIS TROPICAL PETITE BOUTEILLLE": "product_images/OASIS TROPICAL PETITE BOUTEILLLE.png",
             "OASIS POMME POIRE PETITE BOUTEILLLE": "product_images/OASIS POMME POIRE PETITE BOUTEILLLE.png",
@@ -7363,21 +7413,21 @@
             "SEVEN UP CHERRY": "product_images/SEVEN UP CHERRY.png",
             "SEVEN UP EXOTIQUE": "product_images/SEVEN UP EXOTIQUE.png",
             "MIRINDA FRAISE": "product_images/MIRINDA FRAISE.png",
-            "HAWAÏ TROPICAL": "product_images/HAWAÏ TROPICAL.png",
+            "HAWAÏ TROPICAL": "product_images/HAWAI TROPICAL.png",
             "SAMBO BANANE": "product_images/SAMBO BANANE.png",
             "FANTA ORANGE": "product_images/FANTA ORANGE.png",
             "FANTA CITRON": "product_images/FANTA CITRON.png",
             "FANTA FRUIT DU DRAGON": "product_images/FANTA FRUIT DU DRAGON.png",
             "FANTA CASSIS": "product_images/FANTA CASSIS.png",
-            "FANTA DÉLICE TROPICAL": "product_images/FANTA DÉLICE TROPICAL.png",
+            "FANTA DÉLICE TROPICAL": "product_images/FANTA DELICE TROPICAL.png",
             "ICE TEA CLASSIC": "product_images/ICE TEA CLASSIC.png",
             "ICE TEA FRAMBOISE": "product_images/ICE TEA FRAMBOISE.png",
-            "ICE TEA PASTÈQUE MENTHE": "product_images/ICE TEA PASTÈQUE MENTHE.png",
+            "ICE TEA PASTÈQUE MENTHE": "product_images/ICE TEA PASTEQUE MENTHE.png",
             "OASIS POMME CASSIS FRAMBOISE": "product_images/OASIS POMME CASSIS FRAMBOISE.png",
             "OASIS TROPICAL": "product_images/OASIS TROPICAL.png",
             "OASIS FRAISE FRAMBOISE": "product_images/OASIS FRAISE FRAMBOISE.png",
             "OASIS POMME POIRE": "product_images/OASIS POMME POIRE.png",
-            "FUZE TEA PÊCHE": "product_images/FUZE TEA PÊCHE.png",
+            "FUZE TEA PÊCHE": "product_images/FUZE TEA PECHE.png",
             "ORANGINA CLASSIQUE": "product_images/ORANGINA CLASSIQUE.png",
             "SCHWEPPES ORANGE PASSION": "product_images/SCHWEPPES ORANGE PASSION.png",
             "SCHWEPPES AGRUME": "product_images/SCHWEPPES AGRUME.png",
@@ -7401,7 +7451,7 @@
             "DADA CERISE": "product_images/DADA CERISE.png",
             "DADDA LITCHI": "product_images/DADDA LITCHI.png",
             "DADA POMME": "product_images/DADA POMME.png",
-            "DADA PÊCHE": "product_images/DADA PÊCHE.png",
+            "DADA PÊCHE": "product_images/DADA PECHE.png",
             "DADA MOJITO": "product_images/DADA MOJITO.png",
             "DADA COCA": "product_images/DADA COCA.png",
             "PERRIER": "product_images/PERRIER.png",
@@ -7416,19 +7466,19 @@
             "NESTEA POIRE MIEL": "product_images/NESTEA POIRE MIEL.png",
             "B’LUE LITCHI": "product_images/B'LUE LITCHI.png",
             "B’LUE POMME": "product_images/B'LUE POMME.png",
-            "B’LUE PÊCHE": "product_images/B'LUE PÊCHE.png",
+            "B’LUE PÊCHE": "product_images/B'LUE PECHE.png",
             "B’LUE FRAISE": "product_images/B'LUE FRAISE.png",
             "B’LUE CHINE ANANAS": "product_images/B'LUE CHINE ANANAS.png",
             "B’LUE CHINE MANGUE": "product_images/B'LUE CHINE MANGUE.png",
             "B’LUE CHINE CITRON AGRUME": "product_images/B'LUE CHINE CITRON AGRUME.png",
-            "FANTA PÊCHE JASMIN": "product_images/FANTA PÊCHE JASMIN.png",
+            "FANTA PÊCHE JASMIN": "product_images/FANTA PECHE JASMIN.png",
             "FANTA ANANAS": "product_images/FANTA ANANAS.png",
-            "FANTA PÊCHE": "product_images/FANTA PÊCHE.png",
+            "FANTA PÊCHE": "product_images/FANTA PECHE.png",
             "FANTA POMME": "product_images/FANTA POMME.png",
-            "FANTA PASTÈQUE": "product_images/FANTA PASTÈQUE.png",
-            "COCA COLA PÊCHE": "product_images/COCA COLA PÊCHE.png",
+            "FANTA PASTÈQUE": "product_images/FANTA PASTEQUE.png",
+            "COCA COLA PÊCHE": "product_images/COCA COLA PECHE.png",
             "COCA COLA FRAISE": "product_images/COCA COLA FRAISE.png",
-            "PEPSI PÊCHE BLANCHE": "product_images/PEPSI PÊCHE BLANCHE.png",
+            "PEPSI PÊCHE BLANCHE": "product_images/PEPSI PECHE BLANCHE.png",
             "PEPSI POIRE GRAPPEFRUIT": "product_images/PEPSI POIRE GRAPPEFRUIT.png",
             "REDBULL RAISIN NOIR": "product_images/REDBULL RAISIN NOIR.png",
             "REDBULL RAISIN BLANC": "product_images/REDBULL RAISIN BLANC.png",
@@ -7438,25 +7488,25 @@
             "REDBULL RAISIN BLANC|REDBULL": "product_images/REDBULL RAISIN BLANC.png",
             "REDBULL POMME FUJI GINGEMBRE": "product_images/REDBULL POMME FUJI GINGEMBRE.png",
             "REDBULL LIMITED ROSE": "product_images/REDBULL LIMITED ROSE.png",
-            "REDBULL MÜRE VANILLE GIVRÉE": "product_images/REDBULL MÜRE VANILLE GIVRÉE.png",
+            "REDBULL MÜRE VANILLE GIVRÉE": "product_images/REDBULL MURE VANILLE GIVREE.png",
             "REDBULL LIMITED POIRE D'HIVER": "product_images/REDBULL LIMITED POIRE D'HIVER.png",
             "REDBULL LIMITED TROPICAL": "product_images/REDBULL LIMITED TROPICAL.png",
-            "REDBULL LIMITED AÇAÍ": "product_images/REDBULL LIMITED AÇAÍ.png",
-            "REDBULL PÊCHE BLANCHE": "product_images/REDBULL PÊCHE BLANCHE.png",
-            "REDBULL LIMITED PÊCHE": "product_images/REDBULL LIMITED PÊCHE.png",
+            "REDBULL LIMITED AÇAÍ": "product_images/REDBULL LIMITED ACAI.png",
+            "REDBULL PÊCHE BLANCHE": "product_images/REDBULL PECHE BLANCHE.png",
+            "REDBULL LIMITED PÊCHE": "product_images/REDBULL LIMITED PECHE.png",
             "REDBULL PINK GRAPPEFRUIT": "product_images/REDBULL PINK GRAPPEFRUIT.png",
             "REDBULL GRANDE": "product_images/REDBULL GRANDE.png",
-            "REDBULL MOYEN 🇫🇷": "product_images/REDBULL MOYEN 🇫🇷.png",
+            "REDBULL MOYEN 🇫🇷": "product_images/REDBULL MOYEN FR.png",
             "REDBULL SANS SUCRE": "product_images/REDBULL SANS SUCRE.png",
-            "REDBULL ZÉRO": "product_images/REDBULL ZÉRO.png",
-            "REDBULL CLASSIC 🇫🇷": "product_images/REDBULL CLASSIC 🇫🇷.png",
-            "REDBULL CLASSIC 🇪🇸": "product_images/REDBULL CLASSIC 🇪🇸.png",
+            "REDBULL ZÉRO": "product_images/REDBULL ZERO.png",
+            "REDBULL CLASSIC 🇫🇷": "product_images/REDBULL CLASSIC FR.png",
+            "REDBULL CLASSIC 🇪🇸": "product_images/REDBULL CLASSIC ES.png",
             "REDBULL ABRICOT FRAISE": "product_images/REDBULL ABRICOT FRAISE.png",
             "REDBULL CUCUBRA FLEUR DE SIREAU": "product_images/REDBULL CUCUBRA FLEUR DE SIREAU.png",
             "REDBULL JUNEBERRY": "product_images/REDBULL JUNEBERRY.png",
-            "REDBULL PASTÈQUE": "product_images/REDBULL PASTÈQUE.png",
+            "REDBULL PASTÈQUE": "product_images/REDBULL PASTEQUE.png",
             "REDBULL FRUIT DU DRAGON": "product_images/REDBULL FRUIT DU DRAGON.png",
-            "REDBULL COCO-AÇAÍ": "product_images/REDBULL COCO-AÇAÍ.png",
+            "REDBULL COCO-AÇAÍ": "product_images/REDBULL COCO-ACAI.png",
             "REDBULL MYRTILLE": "product_images/REDBULL MYRTILLE.png",
             "VRUNK ENERGY COCO": "product_images/VRUNK ENERGY COCO.png",
             "MONSTER ULTRA VICE GUAVA": "product_images/MONSTER ULTRA VICE GUAVA.png",
@@ -7508,7 +7558,7 @@
             "LAY’S POULET THYN": "product_images/LAY'S POULET THYN.png",
             "LAY’S BARBECUE": "product_images/LAY'S BARBECUE.png",
             "LAY’S 3D NATURE": "product_images/LAY'S 3D NATURE.png",
-            "LAY’S 3D CACAHUÈTE": "product_images/LAY'S 3D CACAHUÈTE.png",
+            "LAY’S 3D CACAHUÈTE": "product_images/LAY'S 3D CACAHUETE.png",
             "LAY’S 3D FROMAGE": "product_images/LAY'S 3D FROMAGE.png",
             "LAY’S FRITELLE EMMENTAL": "product_images/LAY'S FRITELLE EMMENTAL.png",
             "LAY’S FRITELLE NATURE": "product_images/LAY'S FRITELLE NATURE.png",
@@ -7518,22 +7568,22 @@
             "DORITOS PAPRIKA": "product_images/DORITOS PAPRIKA.png",
             "MAIS DOUX BARBECUE": "product_images/MAIS DOUX BARBECUE.png",
             "COCKTAIL CHILLI": "product_images/COCKTAIL CHILLI.png",
-            "PIPAS GRILLÉE": "product_images/PIPAS GRILLÉE.png",
+            "PIPAS GRILLÉE": "product_images/PIPAS GRILLEE.png",
             "PIPAS MEXICAINE": "product_images/PIPAS MEXICAINE.png",
-            "PIPAS SALÉE": "product_images/PIPAS SALÉE.png",
-            "SNUS PABLO (PLUSIEURS GOÛT DISPONIBLE)": "product_images/SNUS PABLO (PLUSIEURS GOÛT DISPONIBLE).png",
-            "SNUS CUBA (PLUSIEURS GOÛT DISPONIBLE)": "product_images/SNUS CUBA (PLUSIEURS GOÛT DISPONIBLE).png",
-            "SNUS KILLA (PLUSIEURS GOÛT DISPONIBLE)": "product_images/SNUS KILLA (PLUSIEURS GOÛT DISPONIBLE).png",
-            "PUFF JNR 28K FALCON X (MYRTILLE GRENADE GLACÉ)": "product_images/PUFF JNR 28K FALCON X (MYRTILLE GRENADE GLACÉ).png",
+            "PIPAS SALÉE": "product_images/PIPAS SALEE.png",
+            "SNUS PABLO (PLUSIEURS GOÛT DISPONIBLE)": "product_images/SNUS PABLO (PLUSIEURS GOUT DISPONIBLE).png",
+            "SNUS CUBA (PLUSIEURS GOÛT DISPONIBLE)": "product_images/SNUS CUBA (PLUSIEURS GOUT DISPONIBLE).png",
+            "SNUS KILLA (PLUSIEURS GOÛT DISPONIBLE)": "product_images/SNUS KILLA (PLUSIEURS GOUT DISPONIBLE).png",
+            "PUFF JNR 28K FALCON X (MYRTILLE GRENADE GLACÉ)": "product_images/PUFF JNR 28K FALCON X (MYRTILLE GRENADE GLACE).png",
             "PUFF JNR 28K FALCON X (MIXED BERRY)": "product_images/PUFF JNR 28K FALCON X (MIXED BERRY).png",
             "PUFF JNR 28K FALCON X (FRAISE KIWI)": "product_images/PUFF JNR 28K FALCON X (FRAISE KIWI).png",
             "PUFF JNR 28K FALCON X (MYRTILLE FRAMBOISE CERISE)": "product_images/PUFF JNR 28K FALCON X (MYRTILLE FRAMBOISE CERISE).png",
-            "PUFF JNR 28K FALCON X (PASTÈQUE MANGUE PÊCHE)": "product_images/PUFF JNR 28K FALCON X (PASTÈQUE MANGUE PÊCHE).png",
+            "PUFF JNR 28K FALCON X (PASTÈQUE MANGUE PÊCHE)": "product_images/PUFF JNR 28K FALCON X (PASTEQUE MANGUE PECHE).png",
             "PUFF JNR 28K FALCON X (MANGUER FRUIT DE LA PASSION)": "product_images/PUFF JNR 28K FALCON X (MANGUER FRUIT DE LA PASSION).png",
-            "PUFF JNR 28K FALCON X (CERISE GLACÉ)": "product_images/PUFF JNR 28K FALCON X (CERISE GLACÉ).png",
-            "PUFF JNR 28K FALCON X (PASTÈQUE BUBBLE GUM)": "product_images/PUFF JNR 28K FALCON X (PASTÈQUE BUBBLE GUM).png",
-            "PUFF JNR 28K FALCON X (PÊCHE FRUIT DES BOIS)": "product_images/PUFF JNR 28K FALCON X (PÊCHE FRUIT DES BOIS).png",
-            "PUFF JNR 28K FALCON X (FRAISE PASTÈQUE GLACÉ)": "product_images/PUFF JNR 28K FALCON X (FRAISE PASTÈQUE GLACÉ).png",
+            "PUFF JNR 28K FALCON X (CERISE GLACÉ)": "product_images/PUFF JNR 28K FALCON X (CERISE GLACE).png",
+            "PUFF JNR 28K FALCON X (PASTÈQUE BUBBLE GUM)": "product_images/PUFF JNR 28K FALCON X (PASTEQUE BUBBLE GUM).png",
+            "PUFF JNR 28K FALCON X (PÊCHE FRUIT DES BOIS)": "product_images/PUFF JNR 28K FALCON X (PECHE FRUIT DES BOIS).png",
+            "PUFF JNR 28K FALCON X (FRAISE PASTÈQUE GLACÉ)": "product_images/PUFF JNR 28K FALCON X (FRAISE PASTEQUE GLACE).png",
             "POPPERS RUSH": "product_images/POPPERS RUSH.png",
             "POPPERS SUPER RUSH": "product_images/POPPERS SUPER RUSH.png",
             "POPPERS RUSH GOLD": "product_images/POPPERS RUSH GOLD.png",
@@ -7549,21 +7599,21 @@
             "BRIQUETS BIC": "product_images/BRIQUETS BIC.png",
             "BRIQUETS CLIPPER": "product_images/BRIQUETS CLIPPER.png",
             "BRIQUETS NOSS": "product_images/BRIQUETS NOSS.png",
-            "COCORI KUSH PRÉ ROULÉ (MANGO KUSH)": "product_images/COCORI KUSH PRÉ ROULÉ (MANGO KUSH).png",
-            "COCORI KUSH PRÉ ROULÉ (GELATO)": "product_images/COCORI KUSH PRÉ ROULÉ (GELATO).png",
-            "COCORI KUSH PRÉ ROULÉ (LEMON HAZE)": "product_images/COCORI KUSH PRÉ ROULÉ (LEMON HAZE).png",
-            "COCORI KUSH PRÉ ROULÉ (AMNESIA)": "product_images/COCORI KUSH PRÉ ROULÉ (AMNESIA).png",
-            "COCORI KUSH PRÉ ROULÉ (STRAWBERRY)": "product_images/COCORI KUSH PRÉ ROULÉ (STRAWBERRY).png",
-            "COCORI KUSH PRÉ ROULÉ (MIX 5 GOÛT)": "product_images/COCORI KUSH PRÉ ROULÉ (MIX 5 GOÛT).png",
+            "COCORI KUSH PRÉ ROULÉ (MANGO KUSH)": "product_images/COCORI KUSH PRE ROULE (MANGO KUSH).png",
+            "COCORI KUSH PRÉ ROULÉ (GELATO)": "product_images/COCORI KUSH PRE ROULE (GELATO).png",
+            "COCORI KUSH PRÉ ROULÉ (LEMON HAZE)": "product_images/COCORI KUSH PRE ROULE (LEMON HAZE).png",
+            "COCORI KUSH PRÉ ROULÉ (AMNESIA)": "product_images/COCORI KUSH PRE ROULE (AMNESIA).png",
+            "COCORI KUSH PRÉ ROULÉ (STRAWBERRY)": "product_images/COCORI KUSH PRE ROULE (STRAWBERRY).png",
+            "COCORI KUSH PRÉ ROULÉ (MIX 5 GOÛT)": "product_images/COCORI KUSH PRE ROULE (MIX 5 GOUT).png",
             "CHICHA CELESTE EL-BADIA PLUSIEURS COLORIS DISPONIBLES": "product_images/CHICHA CELESTE EL-BADIA PLUSIEURS COLORIS DISPONIBLES.png",
-            "CHARBON NATUREL FRESH COCO SUPRÊME 1KG": "product_images/CHARBON NATUREL FRESH COCO SUPRÊME 1KG.png",
-            "CHARBON NATUREL FRESH COCO SUPRÊME X10KG": "product_images/CHARBON NATUREL FRESH COCO SUPRÊME X10KG.png",
+            "CHARBON NATUREL FRESH COCO SUPRÊME 1KG": "product_images/CHARBON NATUREL FRESH COCO SUPREME 1KG.png",
+            "CHARBON NATUREL FRESH COCO SUPRÊME X10KG": "product_images/CHARBON NATUREL FRESH COCO SUPREME X10KG.png",
             "THREE KINGS CHARBON AUTO ALLUMANT": "product_images/THREE KINGS CHARBON AUTO ALLUMANT.png",
             "THREE KINGS CHARBON AUTO ALLUMANT|Matériels Chicha / Autre": "product_images/THREE KINGS CHARBON AUTO ALLUMANT.png",
             "PINCE CHICHA": "product_images/PINCE CHICHA.png",
-            "ALLUME-CHARBONS À GAZ": "product_images/ALLUME-CHARBONS À GAZ.png",
-            "ALLUME-CHARBONS ÉLECTRIQUE - EL BADIA 1000W": "product_images/ALLUME-CHARBONS ÉLECTRIQUE - EL BADIA 1000W.png",
-            "TÊTE EN TERRE CUITE TAILLE M": "product_images/TÊTE EN TERRE CUITE TAILLE M.png",
+            "ALLUME-CHARBONS À GAZ": "product_images/ALLUME-CHARBONS A GAZ.png",
+            "ALLUME-CHARBONS ÉLECTRIQUE - EL BADIA 1000W": "product_images/ALLUME-CHARBONS ELECTRIQUE - EL BADIA 1000W.png",
+            "TÊTE EN TERRE CUITE TAILLE M": "product_images/TETE EN TERRE CUITE TAILLE M.png",
             "FOYER SILICONE (PLUSIEURS COLORIS)": "product_images/FOYER SILICONE (PLUSIEURS COLORIS).png",
             "ESSUIE TOUT 280SERV": "product_images/ESSUIE TOUT 280SERV.png",
             "SOL CHARBON DE BOIS": "product_images/SOL CHARBON DE BOIS.png",
@@ -8708,6 +8758,16 @@
         function wowInit() {
             wowScrollReveal();
             wowInitTheme();
+            wowScrollHint();
+        }
+
+        function wowScrollHint() {
+            const row = document.getElementById('filtersRow');
+            const hint = document.getElementById('scrollHint');
+            if (!row || !hint) return;
+            row.addEventListener('scroll', function() {
+                hint.style.display = 'none';
+            }, { once: true });
         }
 
         function wowInitTheme() {
